@@ -1,4 +1,4 @@
-package main;
+package upsilonAdaptorMermaid;
 
 func BuildMermaidGraph() string {
 	ret := "graph LR\n";

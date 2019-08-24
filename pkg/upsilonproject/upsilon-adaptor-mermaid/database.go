@@ -1,9 +1,9 @@
-package main;
+package upsilonAdaptorMermaid;
 
 import (
 	"fmt"
 	"database/sql"
-	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/go-sql-driver/mysql" // load the MySQL driver.
 	"log"
 )
 

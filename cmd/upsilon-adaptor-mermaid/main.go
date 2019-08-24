@@ -1,14 +1,15 @@
-package main
+package main;
 
 import (
 	"fmt"
 	"net/http"
 	"log"
 	"strconv"
+	uam "github.com/upsilonproject/upsilon-adaptor-mermaid/pkg/upsilonproject/upsilon-adaptor-mermaid"
 )
 
 func handler(w http.ResponseWriter, req *http.Request) {
-	graph := BuildMermaidGraph();
+	graph := uam.BuildMermaidGraph();
 
 	w.Header().Set("Access-Control-Allow-Origin", "*");
 
@@ -16,8 +17,8 @@ func handler(w http.ResponseWriter, req *http.Request) {
 }
 
 func main() {
-	db := DbConn()
-	conf := GetConfig();
+	db := uam.DbConn()
+	conf := uam.GetConfig();
 
 	http.HandleFunc("/", handler)
 
