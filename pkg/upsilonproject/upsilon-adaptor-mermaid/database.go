@@ -11,24 +11,28 @@ var (
 	db *sql.DB
 )
 
+type Node struct {
+	Identifier string;
+	Karma string;
+}
 
-func GetNodes(nodeType string) []string {
+func GetNodes(nodeType string) []Node {
 	var sql string;
-	var ret []string;
+	var ret []Node;
 
 	db := DbConn();
 
 	switch (nodeType) {
 		case "drone":
-			sql = "SELECT identifier FROM nodes WHERE serviceType LIKE '%?(?)%' "
+			sql = "SELECT identifier, datediff(now(), lastUpdated) AS lastUpdated FROM nodes WHERE serviceType LIKE '%?(?)%' "
 		case "reactor":
-			sql = "SELECT identifier FROM nodes WHERE serviceType LIKE '%reactor%' "
+			sql = "SELECT identifier, datediff(now(), lastUpdated) AS lastUpdated FROM nodes WHERE serviceType LIKE '%reactor%' "
 		case "custodian":
-			sql = "SELECT identifier FROM nodes WHERE serviceType LIKE '%custodian%' "
+			sql = "SELECT identifier, datediff(now(), lastUpdated) AS lastUpdated FROM nodes WHERE serviceType LIKE '%custodian%' "
 		case "!custodian":
-			sql = "SELECT identifier FROM nodes WHERE serviceType NOT LIKE '%custodian%' "
+			sql = "SELECT identifier, datediff(now(), lastUpdated) AS lastUpdated FROM nodes WHERE serviceType NOT LIKE '%custodian%' "
 		default:
-			sql = "SELECT identifier FROM nodes"
+			sql = "SELECT identifier, datediff(now(), lastUpdated) AS lastUpdated FROM nodes"
 	}
 
 	fmt.Println(sql);
@@ -40,10 +44,18 @@ func GetNodes(nodeType string) []string {
 	}
 
 	for cursor.Next() {
-		var name string;
-		cursor.Scan(&name);
+		var node Node;
+		var lastUpdated int;
+		cursor.Scan(&node.Identifier, &lastUpdated);
 
-		ret = append(ret, name)
+		if (lastUpdated > 3) {
+			node.Karma = "BAD";
+		} else {
+			node.Karma = "GOOD";
+		}
+
+
+		ret = append(ret, node)
 	}
 
 	return ret;
